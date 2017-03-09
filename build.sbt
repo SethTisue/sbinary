@@ -1,4 +1,4 @@
-lazy val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.0"
+lazy val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.4"
 def scalaXmlDep(scalaV: String): List[ModuleID] =
   CrossVersion.partialVersion(scalaV) match {
     case Some((2, minor)) if minor <= 10 =>
@@ -7,6 +7,16 @@ def scalaXmlDep(scalaV: String): List[ModuleID] =
       List("org.scala-lang.modules" %% "scala-xml" % "1.0.5")
   }
 
+def relaxNon212: Seq[Setting[_]] = Seq(
+    scalacOptions := {
+      val old = scalacOptions.value
+      scalaBinaryVersion.value match {
+        case "2.12" => old
+        case _      => old filterNot (Set("-Xfatal-warnings", "-deprecation", "-Ywarn-unused", "-Ywarn-unused-import").apply _)
+      }
+    }
+  )
+
 lazy val root = (project in file(".")).
   aggregate(core, treeExample).
   settings(
@@ -14,10 +24,9 @@ lazy val root = (project in file(".")).
       organization := "org.scala-sbt",
       organizationHomepage := Some(url("http://scala-sbt.org/")),
       homepage := Some(url("https://github.com/sbt/sbinary")),
-      version := "0.4.4-SNAPSHOT",
-      scalaVersion := "2.10.6",
-      crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.0-M3"),
-      //bintrayPackage := "sbinary",
+      version := "0.4.5-SNAPSHOT",
+      scalaVersion := "2.12.1",
+      crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.1"),
       developers := List(
         Developer("drmaciver", "David R. MacIver", "@drmaciver", url("https://github.com/DRMacIver")),
         Developer("harrah", "Mark Harrah", "@harrah", url("https://github.com/harrah")),
@@ -35,16 +44,18 @@ lazy val root = (project in file(".")).
 lazy val core = (project in file("core")).
   settings(
     name := "SBinary",
+    relaxNon212,
     Fmpp.templateSettings,
     libraryDependencies += scalacheck % Test,
-    libraryDependencies <++= scalaVersion(scalaXmlDep),
-    unmanagedResources in Compile <+= baseDirectory map { _ / "LICENSE" }
+    libraryDependencies ++= scalaVersion(scalaXmlDep).value,
+    unmanagedResources in Compile += (baseDirectory map { _ / "LICENSE" } ).value
   )
 
 lazy val treeExample = (project in (file("examples") / "bt")).
   dependsOn(core).
   settings(
     name := "SBinary Tree Example",
+    relaxNon212,
     publish := (),
     publishLocal := ()
   )
