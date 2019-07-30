@@ -126,14 +126,14 @@ trait JavaUTF extends CoreProtocol {
             count += 2;
             if (count > utflen) partial;
 
-            char2 = bbuffer(count - 1)
+            char2 = bbuffer(count - 1).toInt
             if ((char2 & 0xC0) != 0x80) malformed(count);
             (((c & 0x1F) << 6) | (char2 & 0x3F));
           }
           case 14 => {
             count += 3;
-            char2 = bbuffer(count - 2);
-            char3 = bbuffer(count - 1);
+            char2 = bbuffer(count - 2).toInt
+            char3 = bbuffer(count - 1).toInt
             if (((char2 & 0xC0) != 0x80) || ((char3 & 0xC0) != 0x80))
               malformed(count - 1);
 
@@ -184,7 +184,7 @@ trait JavaUTF extends CoreProtocol {
 
       while (i < value.length) {
         if ((c >= 0x0001) && (c <= 0x007F)) {
-          append(c);
+          append(c.toInt);
         } else if (c > 0x07FF) {
           append(0xE0 | ((c >> 12) & 0x0F));
           append(0x80 | ((c >> 6) & 0x3F));

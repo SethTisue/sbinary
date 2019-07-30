@@ -148,7 +148,7 @@ trait Generic extends CoreProtocol{
     new Format[S]{
       val mappings = summands.toArray.zipWithIndex;
 
-      def reads(in : Input) : S = read(in)(summands(read[Byte](in)).format)
+      def reads(in : Input) : S = read(in)(summands(read[Byte](in).toInt).format)
 
       def writes(out : Output, s : S): Unit =
         mappings.find(_._1.clazz.isInstance(s)) match {

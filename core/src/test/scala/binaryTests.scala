@@ -103,7 +103,7 @@ object CompatTests extends Properties("CompatTests") {
   compatFor[String]("String", _.readUTF, _.writeUTF(_))
   compatFor[Long]("Long", _.readLong, _.writeLong(_))
   compatFor[Int]("Int", _.readInt, _.writeInt(_))
-  compatFor[Byte]("Byte", _.readByte, _.writeByte(_))
+  compatFor[Byte]("Byte", _.readByte, (out, b) => out.writeByte(b.toInt))
   compatFor[Double]("Double", _.readDouble, _.writeDouble(_))
   compatFor[Boolean]("Boolean", _.readBoolean, _.writeBoolean(_))
 }

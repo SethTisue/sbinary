@@ -6,7 +6,7 @@ def scalaXmlDep(scalaV: String): List[ModuleID] =
     case Some((2, 11 | 12)) =>
       List("org.scala-lang.modules" %% "scala-xml" % "1.0.6")
     case _ =>
-      List("org.scala-lang.modules" %% "scala-xml" % "1.1.0")
+      List("org.scala-lang.modules" %% "scala-xml" % "1.2.0")
   }
 
 def relaxOldScala: Seq[Setting[_]] = Seq(
